@@ -1,0 +1,32 @@
+{
+  "schema": "character-art-lab/character-card",
+  "schemaVersion": "0.1",
+  "id": "fox-merchant",
+  "name": "Fox Merchant",
+  "role": "traveling merchant NPC",
+  "world": "cozy fantasy town",
+  "visual": {
+    "genderPresentation": "female",
+    "ageRange": "young adult",
+    "bodyType": "slender",
+    "hair": "long amber hair, soft curls",
+    "eyes": "golden fox-like eyes",
+    "signatureFeatures": ["fox ears", "small fang", "red ribbon", "merchant satchel"],
+    "palette": ["warm amber", "cream white", "muted red"]
+  },
+  "outfit": {
+    "base": "cozy fantasy merchant outfit",
+    "materials": ["linen", "leather", "wool"],
+    "accessories": ["coin pouch", "small ledger"]
+  },
+  "style": {
+    "renderStyle": "anime game character standing illustration",
+    "lineStyle": "clean line art",
+    "lighting": "soft studio lighting",
+    "background": "plain light background"
+  },
+  "constraints": {
+    "mustInclude": ["full body", "front-facing", "feet visible", "clean silhouette"],
+    "avoid": ["extra fingers", "cropped feet", "busy background", "text", "watermark"]
+  }
+}

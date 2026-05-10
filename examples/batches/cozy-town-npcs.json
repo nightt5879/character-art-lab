@@ -1,0 +1,30 @@
+{
+  "schema": "character-art-lab/batch",
+  "schemaVersion": "0.1",
+  "id": "cozy-town-npcs",
+  "defaults": {
+    "provider": "mock",
+    "model": "mock-image",
+    "size": "1104*1472",
+    "n": 4,
+    "promptExtend": false,
+    "watermark": false
+  },
+  "items": [
+    {
+      "id": "fox-merchant-base",
+      "character": "examples/character-cards/fox-merchant.json",
+      "taskType": "base-standing"
+    },
+    {
+      "id": "robot-guard-base",
+      "character": "examples/character-cards/robot-guard.json",
+      "taskType": "base-standing"
+    },
+    {
+      "id": "village-healer-base",
+      "character": "examples/character-cards/village-healer.json",
+      "taskType": "base-standing"
+    }
+  ]
+}

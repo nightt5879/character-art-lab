@@ -1,0 +1,29 @@
+{
+  "schema": "character-art-lab/character-card",
+  "schemaVersion": "0.1",
+  "id": "robot-guard",
+  "name": "Robot Guard",
+  "role": "quiet gate security NPC",
+  "world": "small sci-fi settlement",
+  "visual": {
+    "bodyType": "compact armored frame",
+    "eyes": "single cyan visor",
+    "signatureFeatures": ["rounded helmet", "utility shoulder light", "serial number plate"],
+    "palette": ["graphite", "signal cyan", "weathered white"]
+  },
+  "outfit": {
+    "base": "industrial guard armor",
+    "materials": ["brushed metal", "rubber", "polycarbonate"],
+    "accessories": ["badge module", "radio antenna"]
+  },
+  "style": {
+    "renderStyle": "stylized game character standing illustration",
+    "lineStyle": "clean mechanical line art",
+    "lighting": "soft studio lighting",
+    "background": "plain light background"
+  },
+  "constraints": {
+    "mustInclude": ["full body", "front-facing", "feet visible", "clean silhouette"],
+    "avoid": ["text", "watermark", "busy background", "broken limbs"]
+  }
+}

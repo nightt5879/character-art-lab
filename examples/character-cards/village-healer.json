@@ -1,0 +1,32 @@
+{
+  "schema": "character-art-lab/character-card",
+  "schemaVersion": "0.1",
+  "id": "village-healer",
+  "name": "Village Healer",
+  "role": "warm herbalist NPC",
+  "world": "riverside fantasy village",
+  "visual": {
+    "genderPresentation": "female",
+    "ageRange": "middle aged",
+    "bodyType": "soft and grounded",
+    "hair": "braided dark hair with silver strands",
+    "eyes": "calm green eyes",
+    "signatureFeatures": ["herb satchel", "wooden charm necklace", "rolled sleeves"],
+    "palette": ["sage green", "warm brown", "linen white"]
+  },
+  "outfit": {
+    "base": "practical healer robe",
+    "materials": ["linen", "cotton", "aged leather"],
+    "accessories": ["small mortar pouch", "bandage roll"]
+  },
+  "style": {
+    "renderStyle": "anime game character standing illustration",
+    "lineStyle": "clean line art",
+    "lighting": "soft studio lighting",
+    "background": "plain light background"
+  },
+  "constraints": {
+    "mustInclude": ["full body", "front-facing", "feet visible", "clean silhouette"],
+    "avoid": ["cropped feet", "extra fingers", "text", "watermark"]
+  }
+}
