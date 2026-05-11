@@ -16,6 +16,7 @@ The current release focuses on:
 - MockProvider
 - DashScope Qwen provider for local CLI use
 - CLI `validate` and `render`
+- CLI `inspect` and `review`
 - PNG + image manifest output
 - Web Studio with character editing, prompt preview, mock generation, and JSON export
 
@@ -72,6 +73,26 @@ out/fox-merchant/
   manifests/
   report.json
 ```
+
+Inspect and mark a candidate:
+
+```bash
+npm run cal -- inspect --manifest out/fox-merchant/manifests/fox-merchant-base-standing-0001.json
+
+npm run cal -- review \
+  --manifest out/fox-merchant/manifests/fox-merchant-base-standing-0001.json \
+  --status accepted \
+  --note "Good base silhouette"
+```
+
+## Docs
+
+- [Quick Start](docs/quick-start.md)
+- [Demo Flow](docs/demo.md)
+- [Provider API](docs/provider-api.md)
+- [Asset Schema](docs/asset-schema.md)
+- [API Key Security](docs/api-key-security.md)
+- [Release QA](docs/release-qa.md)
 
 ## Security Notes
 

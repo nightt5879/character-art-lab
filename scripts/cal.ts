@@ -12,6 +12,7 @@ import {
   PortraitSetSchema
 } from "../src/core/schemas";
 import { renderCharacter } from "../src/core/pipeline/render-task";
+import { readImageAssetManifest, summarizeManifest, updateManifestReview } from "../src/core/pipeline/manifest-review";
 
 async function readJson(filePath: string): Promise<unknown> {
   const raw = await readFile(filePath, "utf8");
@@ -37,7 +38,7 @@ const program = new Command();
 program
   .name("cal")
   .description("Character Art Lab CLI")
-  .version("0.1.0");
+  .version("0.1.2");
 
 program
   .command("validate")
@@ -105,6 +106,56 @@ program
 
     console.log(`render ${report.status}: ${options.outDir}`);
     console.log(`images: ${report.imageCount}`);
+  });
+
+program
+  .command("inspect")
+  .description("Inspect an image asset manifest.")
+  .requiredOption("--manifest <path>", "Image asset manifest JSON")
+  .option("--json", "Print full JSON")
+  .action(async (options: { manifest: string; json?: boolean }) => {
+    const manifestPath = path.resolve(options.manifest);
+    const manifest = await readImageAssetManifest(manifestPath);
+
+    if (options.json) {
+      console.log(JSON.stringify(manifest, null, 2));
+      return;
+    }
+
+    const summary = summarizeManifest(manifest);
+    console.log(`asset: ${summary.assetId}`);
+    console.log(`character: ${summary.characterId}`);
+    console.log(`task: ${summary.taskId}`);
+    console.log(`provider: ${summary.provider}`);
+    console.log(`model: ${summary.model}`);
+    console.log(`image: ${summary.image}`);
+    console.log(`review: ${summary.reviewStatus}`);
+    console.log(`created: ${summary.createdAt}`);
+    console.log("");
+    console.log("positive prompt:");
+    console.log(summary.positivePrompt);
+    console.log("");
+    console.log("negative prompt:");
+    console.log(summary.negativePrompt);
+  });
+
+program
+  .command("review")
+  .description("Update the review status on an image asset manifest.")
+  .requiredOption("--manifest <path>", "Image asset manifest JSON")
+  .requiredOption("--status <status>", "pending, accepted, rejected, needs_edit, or archived")
+  .option("--note <note>", "Append a review note")
+  .action(async (options: { manifest: string; status: string; note?: string }) => {
+    const manifestPath = path.resolve(options.manifest);
+    const next = await updateManifestReview(manifestPath, {
+      status: options.status as never,
+      note: options.note
+    });
+
+    console.log(`review ${next.review.status}: ${manifestPath}`);
+    if (options.note) {
+      console.log(`note: ${options.note}`);
+    }
   });
 
 program.parseAsync().catch((error: unknown) => {

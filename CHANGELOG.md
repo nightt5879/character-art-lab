@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.1.2
+
+- Tightened prompt generation with deduplication, safer full-body margins, and provider length warnings.
+- Added CLI `inspect` and `review` commands for manifest-based asset review.
+- Added public MVP docs for quick start, provider API, asset schema, API key safety, demo flow, and release QA.
+
 ## 0.1.1
 
 - Added DashScope Qwen Image provider for local CLI rendering.

@@ -4,6 +4,7 @@ import type { GenerationTask } from "../schemas/generation-task";
 export interface BuiltPrompt {
   positivePrompt: string;
   negativePrompt: string;
+  warnings: string[];
 }
 
 const BASE_NEGATIVE_TERMS = [
@@ -25,12 +26,37 @@ const BASE_NEGATIVE_TERMS = [
   "malformed hands"
 ];
 
-function joinList(values: Array<string | undefined | null>): string {
+function splitPromptTerms(value: string | undefined | null): string[] {
+  return value
+    ? value
+        .split(",")
+        .map((term) => term.trim())
+        .filter(Boolean)
+    : [];
+}
+
+function normalizeTerm(value: string): string {
+  return value.toLowerCase().replace(/\s+/g, " ").trim();
+}
+
+function uniqueTerms(values: Array<string | undefined | null>): string[] {
+  const seen = new Set<string>();
   return values
-    .flatMap((value) => (value ? [value] : []))
+    .flatMap(splitPromptTerms)
     .map((value) => value.trim())
     .filter(Boolean)
-    .join(", ");
+    .filter((value) => {
+      const key = normalizeTerm(value);
+      if (seen.has(key)) {
+        return false;
+      }
+      seen.add(key);
+      return true;
+    });
+}
+
+function joinList(values: Array<string | undefined | null>): string {
+  return uniqueTerms(values).join(", ");
 }
 
 function joinArray(values: string[] | undefined): string {
@@ -59,6 +85,22 @@ function taskComposition(task: GenerationTask): string {
   }
 }
 
+function isCoveredByComposition(term: string, composition: string): boolean {
+  const normalizedTerm = normalizeTerm(term);
+  const normalizedComposition = normalizeTerm(composition);
+  if (normalizedComposition.includes(normalizedTerm)) {
+    return true;
+  }
+
+  const semanticMatches: Record<string, string[]> = {
+    "full body": ["full body visible", "full-body standing"],
+    "front-facing": ["front-facing"],
+    "feet visible": ["feet visible"],
+    "clean silhouette": ["clean silhouette"]
+  };
+  return (semanticMatches[normalizedTerm] ?? []).some((match) => normalizedComposition.includes(match));
+}
+
 export function buildPrompt(character: CharacterCard, task: GenerationTask): BuiltPrompt {
   const visualFeatures = joinList([
     character.visual.genderPresentation,
@@ -83,13 +125,17 @@ export function buildPrompt(character: CharacterCard, task: GenerationTask): Bui
     character.style?.background
   ]);
 
-  const requiredComposition = joinArray(character.constraints?.mustInclude);
+  const composition = taskComposition(task);
+  const requiredComposition = joinArray(
+    character.constraints?.mustInclude?.filter((term) => !isCoveredByComposition(term, composition))
+  );
   const positiveParts = [
     `full-body standing character illustration of ${character.name}`,
     character.role,
     character.world ? `from ${character.world}` : undefined,
     "designed as a clean game dialogue portrait asset",
-    taskComposition(task),
+    composition,
+    "full character visible with extra margin around head and feet",
     requiredComposition,
     visualFeatures,
     outfitDescription,
@@ -100,13 +146,32 @@ export function buildPrompt(character: CharacterCard, task: GenerationTask): Bui
   ];
 
   const negativeTerms = [...BASE_NEGATIVE_TERMS, ...(character.constraints?.avoid ?? [])];
+  const positivePrompt = joinList(positiveParts);
+  const negativePrompt = uniqueTerms(negativeTerms).join(", ");
+  const warnings: string[] = [];
+
+  if (positivePrompt.length > 800) {
+    warnings.push(`Positive prompt is ${positivePrompt.length} characters; DashScope Qwen Image documents an 800 character limit.`);
+  }
+
+  if (negativePrompt.length > 500) {
+    warnings.push(`Negative prompt is ${negativePrompt.length} characters; DashScope Qwen Image documents a 500 character limit.`);
+  }
 
   return {
-    positivePrompt: joinList(positiveParts),
-    negativePrompt: Array.from(new Set(negativeTerms.map((term) => term.trim()).filter(Boolean))).join(", ")
+    positivePrompt,
+    negativePrompt,
+    warnings
   };
 }
 
 export function formatPromptPreview(prompt: BuiltPrompt): string {
-  return [`Positive:`, prompt.positivePrompt, ``, `Negative:`, prompt.negativePrompt].join("\n");
+  return [
+    `Positive:`,
+    prompt.positivePrompt,
+    ``,
+    `Negative:`,
+    prompt.negativePrompt,
+    ...(prompt.warnings.length > 0 ? [``, `Warnings:`, ...prompt.warnings] : [])
+  ].join("\n");
 }

@@ -16,6 +16,7 @@ Alpha / 协议 MVP。
 - MockProvider
 - DashScope Qwen Provider，本地 CLI 使用
 - CLI `validate` 与 `render`
+- CLI `inspect` 与 `review`
 - PNG + image manifest 输出
 - Web Studio：角色卡编辑、prompt 预览、mock 生成、JSON 导出
 
@@ -56,6 +57,26 @@ npm run cal -- render `
 ```
 
 北京 endpoint 是 `https://dashscope.aliyuncs.com`，新加坡 endpoint 是 `https://dashscope-intl.aliyuncs.com`。不同地域的 API Key 和 endpoint 不能混用。
+
+查看并标记候选图：
+
+```powershell
+npm run cal -- inspect --manifest out/fox-merchant-qwen/manifests/fox-merchant-base-standing-0001.json
+
+npm run cal -- review `
+  --manifest out/fox-merchant-qwen/manifests/fox-merchant-base-standing-0001.json `
+  --status accepted `
+  --note "Good base silhouette"
+```
+
+## 文档
+
+- [Quick Start](docs/quick-start.md)
+- [Demo Flow](docs/demo.md)
+- [Provider API](docs/provider-api.md)
+- [Asset Schema](docs/asset-schema.md)
+- [API Key Security](docs/api-key-security.md)
+- [Release QA](docs/release-qa.md)
 
 ## 安全边界
 
