@@ -2,8 +2,7 @@ import path from "node:path";
 import type { CharacterCard, GenerationTask, ImageAssetManifest } from "../schemas";
 import { buildPrompt } from "../prompt/prompt-builder";
 import { buildImageAssetManifest, writeJsonFile } from "../assets/save-manifest";
-import { MockProvider } from "../providers/mock-provider";
-import type { ImageProvider } from "../providers/provider-capabilities";
+import { createImageProvider } from "../providers/factory";
 import { normalizeProviderError } from "../providers/provider-errors";
 
 export interface RenderCharacterInput {
@@ -29,15 +28,6 @@ export interface RenderReport {
   error?: unknown;
 }
 
-function providerFor(task: GenerationTask): ImageProvider {
-  switch (task.provider) {
-    case "mock":
-      return new MockProvider();
-    default:
-      throw new Error(`Provider "${task.provider}" is not implemented in v0.1. Use --provider mock.`);
-  }
-}
-
 function toRelativeOutputPath(outDir: string, absoluteFilePath: string): string {
   return path.relative(outDir, absoluteFilePath).replace(/\\/g, "/");
 }
@@ -45,7 +35,7 @@ function toRelativeOutputPath(outDir: string, absoluteFilePath: string): string 
 export async function renderCharacter(input: RenderCharacterInput): Promise<RenderReport> {
   const startedAt = new Date();
   const prompt = buildPrompt(input.character, input.task);
-  const provider = providerFor(input.task);
+  const provider = createImageProvider(input.task);
 
   await writeJsonFile(path.join(input.outDir, "character-card.json"), input.character);
   await writeJsonFile(path.join(input.outDir, "task.json"), input.task);
@@ -61,7 +51,9 @@ export async function renderCharacter(input: RenderCharacterInput): Promise<Rend
       model: input.task.model,
       characterCard: input.character,
       metadata: {
-        outputDir: input.outDir
+        outputDir: input.outDir,
+        promptExtend: input.task.promptExtend,
+        watermark: input.task.watermark
       }
     });
 

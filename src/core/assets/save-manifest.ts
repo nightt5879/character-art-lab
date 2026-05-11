@@ -26,7 +26,7 @@ export function buildImageAssetManifest(input: BuildManifestInput): ImageAssetMa
       provider: input.generatedImage.provider,
       model: input.generatedImage.model,
       modelVersion: "unknown",
-      runnerVersion: "0.1.0"
+      runnerVersion: "0.1.1"
     },
     files: {
       image: input.imageRelativePath.replace(/\\/g, "/"),

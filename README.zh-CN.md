@@ -8,12 +8,13 @@
 
 Alpha / 协议 MVP。
 
-第一版重点：
+当前版本重点：
 
 - 角色卡协议
 - Prompt Builder
 - Provider 抽象
 - MockProvider
+- DashScope Qwen Provider，本地 CLI 使用
 - CLI `validate` 与 `render`
 - PNG + image manifest 输出
 - Web Studio：角色卡编辑、prompt 预览、mock 生成、JSON 导出
@@ -38,6 +39,23 @@ npm run cal -- render \
   --n 4 \
   --out-dir out/fox-merchant
 ```
+
+配置 DashScope Qwen 后运行真实生成：
+
+```powershell
+$env:DASHSCOPE_API_KEY="sk-your-key"
+$env:DASHSCOPE_BASE_URL="https://dashscope.aliyuncs.com"
+
+npm run cal -- render `
+  --character examples/character-cards/fox-merchant.json `
+  --provider dashscope-qwen `
+  --model qwen-image-2.0-pro `
+  --size 1104*1472 `
+  --n 1 `
+  --out-dir out/fox-merchant-qwen
+```
+
+北京 endpoint 是 `https://dashscope.aliyuncs.com`，新加坡 endpoint 是 `https://dashscope-intl.aliyuncs.com`。不同地域的 API Key 和 endpoint 不能混用。
 
 ## 安全边界
 

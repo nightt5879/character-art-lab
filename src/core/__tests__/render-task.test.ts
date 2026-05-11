@@ -38,4 +38,38 @@ describe("render task", () => {
     const manifest = ImageAssetManifestSchema.parse(JSON.parse(manifestRaw));
     expect(manifest.files.image).toBe("images/fox-merchant-base-standing-0001.png");
   });
+
+  it("writes a failed report when provider setup fails", async () => {
+    const originalApiKey = process.env.DASHSCOPE_API_KEY;
+    delete process.env.DASHSCOPE_API_KEY;
+    const outDir = await mkdtemp(path.join(os.tmpdir(), "cal-render-"));
+    tempDirs.push(outDir);
+    const task = {
+      ...createDefaultGenerationTask(defaultCharacterCard.id),
+      provider: "dashscope-qwen" as const,
+      model: "qwen-image-2.0-pro",
+      n: 1
+    };
+
+    try {
+      await expect(
+        renderCharacter({
+          character: defaultCharacterCard,
+          task,
+          outDir
+        })
+      ).rejects.toThrow();
+
+      const reportRaw = await readFile(path.join(outDir, "report.json"), "utf8");
+      const report = JSON.parse(reportRaw);
+      expect(report.status).toBe("failed");
+      expect(report.error.kind).toBe("missing_api_key");
+    } finally {
+      if (originalApiKey === undefined) {
+        delete process.env.DASHSCOPE_API_KEY;
+      } else {
+        process.env.DASHSCOPE_API_KEY = originalApiKey;
+      }
+    }
+  });
 });
