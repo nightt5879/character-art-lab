@@ -125,3 +125,5 @@ Official references:
 ## Licensing
 
 Project code is intended for Apache-2.0 licensing. Generated images are not licensed by this repository; see `GENERATED_OUTPUT_POLICY.md`.
+
+Copyright notice: see `NOTICE`.
